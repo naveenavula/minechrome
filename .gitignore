@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Compiled proxy binaries (too large for git, build locally with: npx pkg proxy.js)
+proxy-bin/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated utility
+generate-icons.html

@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "XMR Idle Miner",
+  "version": "1.0.0",
+  "description": "Mine Monero (XMR) when your PC is idle. Automatically pauses when you are active.",
+  "permissions": [
+    "idle",
+    "storage",
+    "offscreen",
+    "alarms"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "XMR Idle Miner"
+  },
+  "options_page": "options/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

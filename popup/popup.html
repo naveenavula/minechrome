@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XMR Idle Miner</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>⛏️ XMR Idle Miner</h1>
+      <div class="status-badge" id="statusBadge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Stopped</span>
+      </div>
+    </div>
+
+    <!-- Main Toggle -->
+    <div class="toggle-section">
+      <span class="toggle-label">Mining</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="enableToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Hashrate</div>
+        <div class="stat-value" id="hashrate">0.0 <span class="stat-unit">H/s</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Uptime</div>
+        <div class="stat-value" id="uptime">00:00:00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Accepted</div>
+        <div class="stat-value" id="sharesAccepted">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value" id="sharesRejected">0</div>
+      </div>
+    </div>
+
+    <!-- Wallet Info -->
+    <div class="info-card">
+      <div class="info-row">
+        <span class="info-label">💰 Wallet</span>
+        <span class="info-value" id="walletDisplay">Not configured</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">🌐 Pool</span>
+        <span class="info-value" id="poolDisplay">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">💻 PC State</span>
+        <span class="info-value" id="idleStateDisplay">Active</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <button class="settings-btn" id="settingsBtn">⚙️ Settings</button>
+      <span class="footer-note">Mines only when PC is idle</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
