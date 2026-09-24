@@ -19,9 +19,21 @@
 
     <!-- Main Toggle -->
     <div class="toggle-section">
-      <span class="toggle-label">Mining</span>
+      <span class="toggle-label">Mining (Idle Only)</span>
       <label class="toggle-switch">
         <input type="checkbox" id="enableToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- Test Mode Toggle -->
+    <div class="toggle-section test-section" style="margin-top: -4px; padding: 8px 14px; background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.15);">
+      <div>
+        <span class="toggle-label" style="font-size: 12px; color: #ffb703;">⚡ Mine Now (Test Mode)</span>
+        <div style="font-size: 10px; color: #888;">Mines immediately, ignores idle</div>
+      </div>
+      <label class="toggle-switch" style="width: 40px; height: 22px;">
+        <input type="checkbox" id="forceToggle">
         <span class="toggle-slider"></span>
       </label>
     </div>

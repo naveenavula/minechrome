@@ -14,7 +14,9 @@
 const state = {
   enabled: false,
   mining: false,
+  forceMining: false,
   hashrate: 0,
+  lastHashrate: 0,
   sharesAccepted: 0,
   sharesRejected: 0,
   startTime: null,
@@ -52,6 +54,11 @@ chrome.storage.local.get(['enabled', 'idleTimeout'], (result) => {
 chrome.idle.onStateChanged.addListener((newState) => {
   console.log(`[Miner] Idle state changed: ${state.idleState} → ${newState}`);
   state.idleState = newState;
+
+  if (state.forceMining) {
+    broadcastStatus();
+    return;
+  }
 
   if (newState === 'idle' || newState === 'locked') {
     // PC is idle → start mining if enabled
@@ -195,6 +202,9 @@ async function stopMining() {
     // Offscreen might already be gone
   }
 
+  if (state.hashrate > 0) {
+    state.lastHashrate = state.hashrate;
+  }
   state.mining = false;
   state.hashrate = 0;
   state.poolConnected = false;
@@ -228,8 +238,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (!state.enabled && state.mining) {
         stopMining();
       } else if (state.enabled && !state.mining &&
-                 (state.idleState === 'idle' || state.idleState === 'locked')) {
+                 (state.forceMining || state.idleState === 'idle' || state.idleState === 'locked')) {
         startMining();
+      }
+      sendResponse(getFullStatus());
+      return true;
+
+    case 'toggle-force':
+      state.forceMining = !!msg.force;
+      console.log(`[Miner] Force mining ${state.forceMining ? 'ON' : 'OFF'}`);
+      if (state.forceMining && state.enabled && !state.mining) {
+        startMining();
+      } else if (!state.forceMining && state.idleState === 'active' && state.mining) {
+        stopMining();
       }
       sendResponse(getFullStatus());
       return true;
@@ -272,7 +293,9 @@ function getFullStatus() {
   return {
     enabled: state.enabled,
     mining: state.mining,
+    forceMining: state.forceMining,
     hashrate: state.hashrate,
+    lastHashrate: state.lastHashrate,
     sharesAccepted: state.sharesAccepted,
     sharesRejected: state.sharesRejected,
     totalHashes: state.totalHashes,

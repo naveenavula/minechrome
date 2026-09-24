@@ -10,6 +10,7 @@
 const statusDot = document.getElementById('statusDot');
 const statusText = document.getElementById('statusText');
 const enableToggle = document.getElementById('enableToggle');
+const forceToggle = document.getElementById('forceToggle');
 const hashrateEl = document.getElementById('hashrate');
 const uptimeEl = document.getElementById('uptime');
 const sharesAcceptedEl = document.getElementById('sharesAccepted');
@@ -54,6 +55,21 @@ enableToggle.addEventListener('change', () => {
   });
 });
 
+// Toggle force/test mining
+forceToggle.addEventListener('change', () => {
+  const force = forceToggle.checked;
+  // If force mining is turned on, also ensure enabled is true
+  if (force && !enableToggle.checked) {
+    enableToggle.checked = true;
+    chrome.runtime.sendMessage({ type: 'toggle-enabled', enabled: true });
+  }
+  chrome.runtime.sendMessage({ type: 'toggle-force', force }, (response) => {
+    if (response) {
+      updateUI(response);
+    }
+  });
+});
+
 // Open settings page
 settingsBtn.addEventListener('click', () => {
   chrome.runtime.openOptionsPage();
@@ -69,19 +85,20 @@ chrome.runtime.onMessage.addListener((msg) => {
 // ─── UI Update Functions ───────────────────────────────────────────────────
 
 function updateUI(status) {
-  // Toggle state
-  enableToggle.checked = status.enabled;
+  // Toggle states
+  enableToggle.checked = !!status.enabled;
+  if (forceToggle) forceToggle.checked = !!status.forceMining;
 
   // Status indicator
   if (status.mining) {
     statusDot.className = 'status-dot mining';
-    statusText.textContent = 'Mining';
+    statusText.textContent = status.forceMining ? 'Mining (Test)' : 'Mining (Idle)';
   } else if (status.enabled && (status.idleState === 'active')) {
     statusDot.className = 'status-dot waiting';
-    statusText.textContent = 'Waiting for idle';
+    statusText.textContent = 'Paused (PC active)';
   } else if (status.enabled) {
     statusDot.className = 'status-dot waiting';
-    statusText.textContent = 'Enabled';
+    statusText.textContent = 'Waiting for idle';
   } else {
     statusDot.className = 'status-dot';
     statusText.textContent = 'Disabled';
@@ -89,7 +106,13 @@ function updateUI(status) {
 
   // Hashrate
   const hr = status.hashrate || 0;
-  hashrateEl.innerHTML = `${hr.toFixed(1)} <span class="stat-unit">H/s</span>`;
+  if (hr > 0) {
+    hashrateEl.innerHTML = `${hr.toFixed(1)} <span class="stat-unit">H/s</span>`;
+  } else if (status.lastHashrate > 0) {
+    hashrateEl.innerHTML = `<span style="color:#aaa;">${status.lastHashrate.toFixed(1)}</span> <span class="stat-unit">H/s (last)</span>`;
+  } else {
+    hashrateEl.innerHTML = `0.0 <span class="stat-unit">H/s</span>`;
+  }
 
   // Shares
   sharesAcceptedEl.textContent = status.sharesAccepted || 0;

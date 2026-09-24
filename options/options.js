@@ -57,11 +57,15 @@ saveBtn.addEventListener('click', () => {
   const threads = parseInt(threadsSlider.value, 10);
   const idleTimeout = parseInt(idleTimeoutSlider.value, 10);
 
-  // Validate wallet address
-  if (wallet && (wallet.length < 90 || wallet.length > 110)) {
-    showStatus('Invalid wallet address. XMR addresses are ~95 characters long.', 'error');
+  // Check wallet address
+  if (!wallet) {
+    showStatus('Please enter a wallet address.', 'error');
     return;
   }
+  if (wallet.length < 90 || wallet.length > 110) {
+    showStatus('Saved! Note: Monero addresses are usually 95 chars (yours is ' + wallet.length + '). Check if it was truncated.', 'success');
+  }
+
 
   // Validate pool URL
   if (poolUrl && !poolUrl.startsWith('ws://') && !poolUrl.startsWith('wss://')) {
